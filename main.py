@@ -67,7 +67,7 @@ def page4():
 			)
 		resp = r.json()
 		try:
-			col2.image(resp['output_url'], use_column_width=True)
+			st.image(resp['output_url'], use_column_width=True)
 		except:
 			st.write(r.json())
 
