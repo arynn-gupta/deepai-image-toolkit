@@ -195,8 +195,7 @@ with open("style.css") as f:
 
 def changePage(name):
     resp = None
-    st.session_state["page_name"] = name
-    page_names_to_funcs[name]()
+    st.session_state["currentPage"] = name
 
 
 page_names_to_funcs = {
@@ -254,8 +253,8 @@ elif button12:
     changePage("page12")
 elif button13:
     changePage("page13")
-else:
-    try:
-        page_names_to_funcs[st.session_state.page_name]()
-    except:
-        page_names_to_funcs["page1"]()
+
+try:
+    page_names_to_funcs[st.session_state.currentPage]()
+except:
+    page_names_to_funcs["page1"]()
