@@ -178,7 +178,10 @@ def render_dual_content(api, page, name1="Image 1", name2="Image 2"):
                                 headers=headers,
                             )
                             resp = r.json()
-                            st.header("Match : " + str(100 -resp["output"]["distance"]) + " %")
+                            if (resp["output"]["distance"]>=36):
+                                st.header("Match : 0%")
+                            else:
+                                st.header("Match : " + str(round(100-resp["output"]["distance"]*2.77777777778)) + " %")
                         if page == "Style Transfer":
                             r = requests.post(
                                 api,
