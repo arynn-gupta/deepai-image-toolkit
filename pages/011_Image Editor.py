@@ -3,13 +3,14 @@ import streamlit as st
 import cv2
 from  PIL import Image, ImageEnhance
 from lib.utils import styling
+from rembg import remove
 
 def main():
 
     styling()
     st.title("Image Editor")
 
-    menu = ['Filters','Image Corrections']
+    menu = ['Filters','Image Corrections', 'Backgroud Removal']
     op = st.sidebar.selectbox('Option', menu)
 
     if op == 'Filters':
@@ -84,6 +85,17 @@ def main():
                 st.image(sharpness_image, use_column_width=True)
             else: 
                 st.image(image, use_column_width=True)
+
+    if op == 'Backgroud Removal':
+        
+        img = st.file_uploader('', type=['jpg', 'png', 'jpeg'])
+    
+        if img is not None:
+            with st.spinner(""):
+                image = Image.open(img)
+                output = remove(image)
+                st.image(output, use_column_width=True)
+                
 
 if __name__ == '__main__':
     main()
