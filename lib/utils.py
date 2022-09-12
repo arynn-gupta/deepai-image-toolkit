@@ -96,10 +96,10 @@ def handle_error(resp, type="post"):
             if "Sign up" in resp["status"] :
                 api_bypass()
                 st.error("Submit Again", icon="⚠️")
-        except:
+        except Exception as e:
             # st.error("Reload Page", icon="⚠️")
             # dev output
-            st.error(resp, icon="⚠️")
+            st.write(e)
     else:
         st.error("Reload Page", icon="⚠️")
         # dev output
