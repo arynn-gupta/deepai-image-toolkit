@@ -96,10 +96,10 @@ def handle_error(resp, type="post"):
             if "Sign up" in resp["status"] :
                 api_bypass()
                 st.error("Submit Again", icon="⚠️")
-        except Exception as e:
-            # st.error("Reload Page", icon="⚠️")
+        except:
+            st.error("Reload Page", icon="⚠️")
             # dev output
-            st.write(e)
+            # st.error(resp, icon="⚠️")
     else:
         st.error("Reload Page", icon="⚠️")
         # dev output
@@ -146,8 +146,9 @@ def render_content(api, style):
                                 st.image(img, use_column_width=True)
                             else:
                                 st.image(resp["output_url"], use_column_width=True)
-                except :
-                    handle_error(resp)
+                except Exception as e:
+                    st.write(e)
+                    # handle_error(resp)
 
 
 def render_dual_content(api, page, name1="Image 1", name2="Image 2"):
