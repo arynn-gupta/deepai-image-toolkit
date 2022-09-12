@@ -133,7 +133,7 @@ def render_content(api, style):
                             )
                             resp = r.json()
                             if style=="Nudity Detection":
-                                img = read_image("temp\\temp_image"+extension)
+                                img = read_image("temp/" + "temp_image" + extension)
                                 bbox=[]
                                 labels=[]
                                 for i in resp["output"]["detections"]:
@@ -146,9 +146,8 @@ def render_content(api, style):
                                 st.image(img, use_column_width=True)
                             else:
                                 st.image(resp["output_url"], use_column_width=True)
-                except Exception as e:
-                    st.write(e)
-                    # handle_error(resp)
+                except :
+                    handle_error(resp)
 
 
 def render_dual_content(api, page, name1="Image 1", name2="Image 2"):
