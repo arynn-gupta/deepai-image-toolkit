@@ -6,7 +6,7 @@ def main():
         
     st.title("Text To Image")
     st.markdown(
-        "This is an AI image Generator. It creates an image from scratch from a text description. Text-to-image uses AI to understand your words and convert them to a unique image each time. Like magic."
+        "This is an AI image Generator. It creates an image from scratch from a text description. It is much faster than Stable difussion but compromises with image quality."
     )
     render_form(api="https://api.deepai.org/api/text2img", label="Describe your image")
 

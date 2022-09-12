@@ -1,7 +1,12 @@
 import streamlit as st
 import os
 import requests
+from websocket import create_connection
 import random
+import json
+import time
+import string
+import base64
 import torch
 import torchvision
 from torchvision.io import read_image
@@ -69,18 +74,19 @@ a.css-1m59598.e1fqkh3o6 span{
 def styling():
     st.markdown(f"<style>{style}</style>", unsafe_allow_html=True)
     st.markdown('''<style>
-        li:nth-child(1) span:before {  content: '''+icon1+'''; }
-        li:nth-child(2) span:before {  content: '''+icon2+'''; }
-        li:nth-child(3) span:before {  content: '''+icon3+'''; }
-        li:nth-child(4) span:before {  content: '''+icon4+'''; }
-        li:nth-child(5) span:before {  content: '''+icon5+'''; }
-        li:nth-child(6) span:before {  content: '''+icon6+'''; }
-        li:nth-child(7) span:before {  content: '''+icon7+'''; }
-        li:nth-child(8) span:before {  content: '''+icon8+'''; }
-        li:nth-child(9) span:before {  content: '''+icon9+'''; }
-        li:nth-child(10) span:before {  content: '''+icon10+'''; }
-        li:nth-child(11) span:before {  content: '''+icon11+'''; }
-        li:nth-child(12) span:before {  content: '''+icon12+'''; }
+        li:nth-child(1) span:before {  content: '''+info+'''; }
+        li:nth-child(2) span:before {  content: '''+chat+'''; }
+        li:nth-child(3) span:before {  content: '''+robot+'''; }
+        li:nth-child(4) span:before {  content: '''+person+'''; }
+        li:nth-child(5) span:before {  content: '''+emoji+'''; }
+        li:nth-child(6) span:before {  content: '''+shuffle+'''; }
+        li:nth-child(7) span:before {  content: '''+drizzle+'''; }
+        li:nth-child(8) span:before {  content: '''+palette+'''; }
+        li:nth-child(9) span:before {  content: '''+card_image+'''; }
+        li:nth-child(10) span:before {  content: '''+badge_4k+'''; }
+        li:nth-child(11) span:before {  content: '''+yin_yang+'''; }
+        li:nth-child(12) span:before {  content: '''+person_bbox+'''; }
+        li:nth-child(13) span:before {  content: '''+pencil+'''; }
     </style>''', unsafe_allow_html=True)
 
 def api_bypass():
@@ -221,4 +227,54 @@ def render_generator_btn(label, api):
                     resp = requests.get(api)
                     st.image(resp.content, use_column_width=True)
             except:
+                handle_error(resp)
+
+
+def stable_dffusion(label):
+    with st.form("my_form"):
+        prompt = st.text_area(label)
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            try:
+                with st.spinner(""):
+                    session_hash=''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(11))
+                    r = requests.post(url = "https://hf.space/embed/stabilityai/stable-diffusion/api/predict/", 
+                        json = { "fn_index": 4, "data": [], "session_hash": session_hash })
+                    resp=r.json()
+                    prompt_id = resp["data"][0]
+
+                    hash_value = '{"hash":"'+session_hash+'"}'
+                    send_data = '{"fn_index":2, "data":["'+prompt+'",4,45,7.5,'+str(prompt_id)+']}'
+                    ws = create_connection("wss://spaces.huggingface.tech/stabilityai/stable-diffusion/queue/join")
+                    ws.send(hash_value)
+
+                    status = st.empty()
+                    start = time.time()
+                    while 1:
+                        resp = ws.recv()
+                        resp = json.loads(resp)
+                        if resp["msg"]=="process_completed":
+                            images=[]
+                            for i in resp["output"]["data"][0]:
+                                    img_data = i.replace('data:image/png;base64,', '')
+                                    images.append(base64.b64decode(img_data))
+                            col1,col2 = st.columns(2)
+                            col1.image(images[0], use_column_width=True)
+                            col2.image(images[1], use_column_width=True)
+                            col3,col4 = st.columns(2)
+                            col3.image(images[2], use_column_width=True)
+                            col4.image(images[3], use_column_width=True)
+                        if resp["msg"]=="process_completed" or resp["msg"]=="queue_full":
+                            status.subheader('')
+                            ws.close()
+                            break
+                        if resp["msg"]=="send_data":
+                            ws.send(send_data)
+                        try:
+                            end = time.time()
+                            cur_time = end - start
+                            status.subheader(f"Queue: {resp['rank']} / {resp['queue_size']} \nElapsed Time: {round(cur_time,1)}/{round(cur_time+resp['rank_eta'],1)}")
+                        except :
+                            pass
+            except :
                 handle_error(resp)

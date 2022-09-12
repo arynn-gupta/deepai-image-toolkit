@@ -6,12 +6,23 @@ from lib.utils import styling
 def main():
     styling()
 
-    st.title("# Deep AI Image Toolkit")
+    st.title("Deep AI Image Toolkit")
     st.markdown("Welcome to the free A.I. image toolkit, this open-source toolkit let's you use various artificial intelligence tools to manipulate your images. Some of these include :")
 
+    st.subheader("Stable Diffusion")
+    st.markdown(
+        "Stable Diffusion is a state of the art text-to-image model that generates images from text. It uses AI to understand your words and convert them to a unique image each time. Like magic."
+    )
+    st.markdown("`Prompt : albert einstein shaking hands with ironman, realistic, cinematic, anamorphic, 4k`")
+    col1,col2 = st.columns(2)
+    col1.image(os.path.join("demo_images", "Stable Diffusion_1.png"), use_column_width=True)
+    col2.image(os.path.join("demo_images", "Stable Diffusion_2.png"), use_column_width=True)
+    col3,col4 = st.columns(2)
+    col3.image(os.path.join("demo_images", "Stable Diffusion_3.png"), use_column_width=True)
+    col4.image(os.path.join("demo_images", "Stable Diffusion_4.png"), use_column_width=True)
 
     st.subheader("Text To Image")
-    st.markdown("This is an AI image Generator. It creates an image from scratch from a text description. Text-to-image uses AI to understand your words and convert them to a unique image each time. Like magic.")
+    st.markdown("This is an AI image Generator. It creates an image from scratch from a text description. It is much faster than Stable difussion but compromises with image quality.")
     st.markdown("`Prompt : Shiba inu in Space`")
     st.image(os.path.join("demo_images", "Text To Image.jpg"), use_column_width=True)
 
