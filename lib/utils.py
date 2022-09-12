@@ -97,9 +97,9 @@ def handle_error(resp, type="post"):
                 api_bypass()
                 st.error("Submit Again", icon="⚠️")
         except:
-            st.error("Reload Page", icon="⚠️")
+            # st.error("Reload Page", icon="⚠️")
             # dev output
-            # st.error(resp, icon="⚠️")
+            st.error(resp, icon="⚠️")
     else:
         st.error("Reload Page", icon="⚠️")
         # dev output
