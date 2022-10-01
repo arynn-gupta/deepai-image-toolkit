@@ -232,7 +232,8 @@ def render_generator_btn(label, api):
 
 
 def stable_dffusion(label):
-    torch.no_grad()
+    with torch.no_grad():
+        torch.cuda.empty_cache()
     model_id = "CompVis/stable-diffusion-v1-4"
     device = "cuda"
     value = os.getenv("HF_TOKEN")
