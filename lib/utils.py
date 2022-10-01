@@ -276,28 +276,26 @@ def compare_images_api(image_path1, image_path2):
         return str(round(100-resp["output"]["distance"]*2.77777777778))
 
 def nudity_detection_api(image_path):
-    try:
-        api="https://api.deepai.org/api/nsfw-detector"
-        r = requests.post(
-            api,
-            files={"image": open(image_path, "rb"),},
-            headers=headers,
-        )
-        resp = r.json()
-        img = Image.open(image_path)
-        img = torchvision.transforms.ToTensor()(img).type(dtype=torch.uint8)
-        bbox=[]
-        labels=[]
-        for i in resp["output"]["detections"]:
-            left, top, width, height = i["bounding_box"]
-            bbox.append([left, top, left+width, top+height])
-            labels.append(i["name"])
-        bbox = torch.tensor(bbox, dtype=torch.int)
-        img = draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
-        img = torchvision.transforms.ToPILImage()(img)
-        return img
-    except Exception as e:
-        st.write(e)
+    api="https://api.deepai.org/api/nsfw-detector"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    img = Image.open(image_path)
+    transform = torchvision.transforms.Compose([transforms.PILToTensor()])
+    img = transform(img)
+    bbox=[]
+    labels=[]
+    for i in resp["output"]["detections"]:
+        left, top, width, height = i["bounding_box"]
+        bbox.append([left, top, left+width, top+height])
+        labels.append(i["name"])
+    bbox = torch.tensor(bbox, dtype=torch.int)
+    img = draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
+    img = torchvision.transforms.ToPILImage('RGB')(img)
+    return img
 
 def background_removal(image_path):
     image = Image.open(image_path)
