@@ -252,4 +252,4 @@ def stable_dffusion(label):
                             for image in images_list["sample"]:
                                 st.image(image)
             except Exception as e:
-                handle_error(e)
+                print(e)
