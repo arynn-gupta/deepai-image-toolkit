@@ -1,5 +1,9 @@
 import streamlit as st
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["HF_TOKEN"] = "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"
+
 import requests
 import random
 import torch
@@ -9,9 +13,6 @@ from torchvision.io import read_image
 from torchvision.utils import draw_bounding_boxes
 from icons import *
 from diffusers import StableDiffusionPipeline
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-os.environ["HF_TOKEN"] = "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"
 
 headers = {
     "api-key" : "quickstart-QUdJIGlzIGNvbWluZy4uLi4K",
