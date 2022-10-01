@@ -251,5 +251,5 @@ def stable_dffusion(label):
                             images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
                             for image in images_list["sample"]:
                                 st.image(image)
-            except :
-                handle_error('')
+            except Exception as e:
+                handle_error(e)
