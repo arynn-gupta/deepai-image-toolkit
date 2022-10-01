@@ -1,5 +1,5 @@
 import streamlit as st
-from lib.utils import render_content, styling
+from lib.utils import styling, render_content
 
 def main():
     styling()
@@ -8,7 +8,7 @@ def main():
     st.markdown(
         "This tool upscales images while reducing noise within the image. It gets its name from the anime-style art known as 'waifu' that it was largely trained on."
     )
-    render_content(style="Reduced Noise", api="https://api.deepai.org/api/waifu2x")
+    render_content(style="Reduced Noise")
 
 if __name__ == '__main__':
     main()

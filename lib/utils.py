@@ -13,6 +13,8 @@ from torchvision.io import read_image
 from torchvision.utils import draw_bounding_boxes
 from icons import *
 from diffusers import StableDiffusionPipeline
+from  PIL import Image
+from rembg import remove
 
 headers = {
     "api-key" : "quickstart-QUdJIGlzIGNvbWluZy4uLi4K",
@@ -97,20 +99,9 @@ def api_bypass():
         "X-Forwarded-For": ".".join(str(random.randint(0, 255)) for _ in range(4))
     }
 
-def handle_error(resp, type="post"):
-    if( type=="post"):
-        try :
-            if "Sign up" in resp["status"] :
-                api_bypass()
-                st.error("Submit Again", icon="⚠️")
-        except:
-            st.error("Tool is currently unavailable.", icon="⚠️")
-            # dev output
-            # st.error(resp, icon="⚠️")
-    else:
-        st.error("Tool is currently unavailable.", icon="⚠️")
-        # dev output
-        # st.error(resp.content, icon="⚠️")
+def handle_error():
+    api_bypass()
+    st.error("Submit Again", icon="⚠️")
 
 def save_uploadedfile(image_file, name="temp_image"):
     extension = "." + image_file.name.split(".")[-1]
@@ -118,7 +109,7 @@ def save_uploadedfile(image_file, name="temp_image"):
         f.write(image_file.getbuffer())
     return 1
 
-def render_content(api, style):
+def render_content(style):
     with st.form("my_form"):
         image_file = st.file_uploader("", type=["png", "jpeg", "jpg"])
         submitted = st.form_submit_button("Submit")
@@ -130,34 +121,28 @@ def render_content(api, style):
                 col1.header("Original")
                 col1.image(image_file, use_column_width=True)
                 col2.header(style)
+                image_path = "temp/" + "temp_image" + extension
                 try:
                     with col2:
                         with st.spinner(""):
-                            r = requests.post(
-                                api,
-                                files={"image": open("temp/" + "temp_image" + extension, "rb"),},
-                                headers=headers,
-                            )
-                            resp = r.json()
-                            if style=="Nudity Detection":
-                                img = read_image("temp/" + "temp_image" + extension)
-                                bbox=[]
-                                labels=[]
-                                for i in resp["output"]["detections"]:
-                                    left, top, width, height = i["bounding_box"]
-                                    bbox.append([left, top, left+width, top+height])
-                                    labels.append(i["name"])
-                                bbox = torch.tensor(bbox, dtype=torch.int)
-                                img=draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
-                                img = torchvision.transforms.ToPILImage()(img)
-                                st.image(img, use_column_width=True)
-                            else:
-                                st.image(resp["output_url"], use_column_width=True)
+                            if style=="Toonified":
+                                img = toonify_api(image_path)
+                            elif style=="Dreamified":
+                                img = dreamify_api(image_path)
+                            elif style=="Colorized":
+                                img = colorization_api(image_path)
+                            elif style=="Reduced Noise":
+                                img = noise_reduction_api(image_path)
+                            elif style=="Increased Resolution":
+                                img = super_resolution_api(image_path)
+                            elif style=="Nudity Detection":
+                                img = nudity_detection_api(image_path)
+                            st.image(img, use_column_width=True)
                 except :
-                    handle_error(resp)
+                    handle_error()
 
 
-def render_dual_content(api, page, name1="Image 1", name2="Image 2"):
+def render_dual_content(page, name1="Image 1", name2="Image 2"):
     with st.form("my_form"):
         image_file_1 = st.file_uploader(name1, type=["png", "jpeg", "jpg"])
         image_file_2 = st.file_uploader(name2, type=["png", "jpeg", "jpg"])
@@ -173,86 +158,144 @@ def render_dual_content(api, page, name1="Image 1", name2="Image 2"):
                 col1.image(image_file_1, use_column_width=True)
                 col2.header(name2)
                 col2.image(image_file_2, use_column_width=True)
+                image_path1 = "temp/" + "temp_image_1" + extension1
+                image_path2 = "temp/" + "temp_image_2" + extension2
                 try:
                     with st.spinner(""):
                         if page == "Compare Images":
-                            r = requests.post(
-                                api,
-                                files={
-                                    "image1": open("temp/" + "temp_image_1" + extension1, "rb"),
-                                    "image2": open("temp/" + "temp_image_2" + extension2, "rb"),
-                                },
-                                headers=headers,
-                            )
-                            resp = r.json()
-                            if (resp["output"]["distance"]>=36):
-                                st.header("Match : 0%")
-                            else:
-                                st.header("Match : " + str(round(100-resp["output"]["distance"]*2.77777777778)) + " %")
+                            match = compare_images_api(image_path1, image_path2)
+                            st.header(f"Match : {match}%")
                         if page == "Style Transfer":
-                            r = requests.post(
-                                api,
-                                files={
-                                    "content": open("temp/" + "temp_image_1" + extension1, "rb"),
-                                    "style": open("temp/" + "temp_image_2" + extension2, "rb"),
-                                },
-                                headers=headers,
-                            )
-                            resp = r.json()
+                            img = style_transfer_api(image_path1, image_path2)
                             st.header("Output :")
-                            st.image(resp["output_url"], use_column_width=True)
+                            st.image(img, use_column_width=True)
                 except:
-                    handle_error(resp)
+                    handle_error()
 
-def render_form(label, api):
-    with st.form("my_form"):
-        prompt = st.text_area(label)
-        submitted = st.form_submit_button("Submit")
-        if submitted:
-            try:
-                with st.spinner(""):
-                    r = requests.post(
-                        api, data={"text": prompt}, headers=headers
-                    )
-                    resp = r.json()
-                    st.image(resp["output_url"], use_column_width=True)
-            except :
-                handle_error(resp)
-
-def render_generator_btn(label, api):
-    with st.form("my_form"):
-        submitted = st.form_submit_button(label)
-        if submitted:
-            try:
-                with st.spinner(""):
-                    resp = requests.get(api)
-                    st.image(resp.content, use_column_width=True)
-            except:
-                handle_error(resp)
-
-
-def stable_dffusion(label):
+def stable_diffusion_api(prompt, samples=4, scale=7.5, steps=45, seed=1024):
     model_id = "CompVis/stable-diffusion-v1-4"
     device = "cuda"
     value = os.getenv("HF_TOKEN")
-    
-    with st.form("my_form"):
-        prompt = st.text_area(label)   
-        col1,col2 =st.columns(2)    
-        samples = col1.number_input("Number of images", value=4)
-        scale = col1.number_input("Guidance", value=7.5)
-        steps = col2.number_input("Steps", value=45)
-        seed = col2.number_input("Seed", value=1024)
-        submitted = st.form_submit_button("Submit")
-        if submitted:
-            try:
-                with st.spinner(""):
-                        pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
-                        pipe = pipe.to(device)
-                        generator = torch.Generator(device=device).manual_seed(seed)
-                        with autocast("cuda"):
-                            images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
-                        for image in images_list["sample"]:
-                            st.image(image)
-            except :
-                handle_error('')
+    pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
+    pipe = pipe.to(device)
+    generator = torch.Generator(device=device).manual_seed(seed)
+    with autocast("cuda"):
+        images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
+    return images_list
+
+def text_to_image_api(prompt):
+    api="https://api.deepai.org/api/text2img"
+    r = requests.post(
+        api, data={"text": prompt}, headers=headers
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def generate_random_human_api():
+    api="https://thispersondoesnotexist.com/image"
+    resp = requests.get(api)
+    return resp.content
+
+def toonify_api(image_path):
+    api="https://api.deepai.org/api/toonify"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def style_transfer_api(image_path1, image_path2):
+    api="https://api.deepai.org/api/image-similarity"
+    r = requests.post(
+        api,
+        files={
+            "content": open(image_path1, "rb"),
+            "style": open(image_path2, "rb"),
+        },
+        headers=headers,
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def dreamify_api(image_path):
+    api="https://api.deepai.org/api/deepdream"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def colorization_api(image_path):
+    api="https://api.deepai.org/api/colorizer"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def noise_reduction_api(image_path):
+    api="https://api.deepai.org/api/waifu2x"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def super_resolution_api(image_path):
+    api="https://api.deepai.org/api/torch-srgan"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    return resp["output_url"]
+
+def compare_images_api(image_path1, image_path2):
+    api="https://api.deepai.org/api/image-similarity"
+    r = requests.post(
+        api,
+        files={
+            "image1": open(image_path1, "rb"),
+            "image2": open(image_path2, "rb"),
+        },
+        headers=headers,
+    )
+    resp = r.json()
+    if (resp["output"]["distance"]>=36):
+        return 0
+    else:
+        return str(round(100-resp["output"]["distance"]*2.77777777778))
+
+def nudity_detection_api(image_path):
+    api="https://api.deepai.org/api/nsfw-detector"
+    r = requests.post(
+        api,
+        files={"image": open(image_path, "rb"),},
+        headers=headers,
+    )
+    resp = r.json()
+    img = read_image(image_path)
+    bbox=[]
+    labels=[]
+    for i in resp["output"]["detections"]:
+        left, top, width, height = i["bounding_box"]
+        bbox.append([left, top, left+width, top+height])
+        labels.append(i["name"])
+    bbox = torch.tensor(bbox, dtype=torch.int)
+    img=draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
+    img = torchvision.transforms.ToPILImage()(img)
+    return img
+
+def background_removal(image_path):
+    image = Image.open(image_path)
+    output = remove(image)
+    return output

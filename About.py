@@ -1,7 +1,79 @@
 import streamlit as st
 import os
 from lib.utils import styling
+from lib.utils import stable_diffusion_api, text_to_image_api, generate_random_human_api, toonify_api, style_transfer_api, dreamify_api, colorization_api, noise_reduction_api, super_resolution_api, compare_images_api, nudity_detection_api, background_removal
 
+def stable_diffusion_daisi(prompt, samples=4, scale=7.5, steps=45, seed=1024):
+    '''
+    Returns an array of Pillow images.
+    '''
+    return stable_diffusion_api(prompt, samples, scale, steps, seed)
+
+def text_to_image_daisi(prompt):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return text_to_image_api(prompt)
+
+def generate_random_human_daisi():
+    '''
+    Returns a Pillow image.
+    '''
+    return generate_random_human_api()
+
+def toonify_daisi(image_path):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return toonify_api(image_path)
+
+def style_transfer_daisi(image_path1, image_path2):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return style_transfer_api(image_path1, image_path2)
+
+def dreamify_daisi(image_path):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return dreamify_api(image_path)
+
+def colorization_daisi(image_path):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return colorization_api(image_path)
+
+def noise_reduction_daisi(image_path):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return noise_reduction_api(image_path)
+
+def super_resolution_daisi(image_path):
+    '''
+    Returns a URL with the generated image.
+    '''
+    return super_resolution_api(image_path)
+
+def compare_images_daisi(image_path1, image_path2):
+    '''
+    Returns image match percentage.
+    '''
+    return compare_images_api(image_path1, image_path2)
+
+def nudity_detection_daisi(image_path):
+    '''
+    Returns a Pillow image.
+    '''
+    return nudity_detection_api(image_path)
+
+def background_removal(image_path):
+    '''
+    Returns a Pillow image.
+    '''
+    return background_removal(image_path)
 
 def main():
     styling()
