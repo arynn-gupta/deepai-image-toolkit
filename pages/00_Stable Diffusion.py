@@ -21,7 +21,7 @@ def main():
             try:
                 with st.spinner(""):
                         images_list = stable_diffusion_api(prompt, samples, scale, steps, seed)
-                        for image in images_list["sample"]:
+                        for image in images_list:
                             st.image(image)
             except :
                 handle_error()

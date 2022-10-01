@@ -103,40 +103,31 @@ def handle_error():
     api_bypass()
     st.error("Submit Again", icon="⚠️")
 
-def save_uploadedfile(image_file, name="temp_image"):
-    extension = "." + image_file.name.split(".")[-1]
-    with open(os.path.join("temp", name + extension), "wb") as f:
-        f.write(image_file.getbuffer())
-    return 1
-
 def render_content(style):
     with st.form("my_form"):
         image_file = st.file_uploader("", type=["png", "jpeg", "jpg"])
         submitted = st.form_submit_button("Submit")
         if submitted:
             if image_file is not None:
-                save_uploadedfile(image_file)
-                extension = "." + image_file.name.split(".")[-1]
                 col1, col2 = st.columns(2)
                 col1.header("Original")
                 col1.image(image_file, use_column_width=True)
                 col2.header(style)
-                image_path = "temp/" + "temp_image" + extension
                 try:
                     with col2:
                         with st.spinner(""):
                             if style=="Toonified":
-                                img = toonify_api(image_path)
+                                img = toonify_api(image_file)
                             elif style=="Dreamified":
-                                img = dreamify_api(image_path)
+                                img = dreamify_api(image_file)
                             elif style=="Colorized":
-                                img = colorization_api(image_path)
+                                img = colorization_api(image_file)
                             elif style=="Reduced Noise":
-                                img = noise_reduction_api(image_path)
+                                img = noise_reduction_api(image_file)
                             elif style=="Increased Resolution":
-                                img = super_resolution_api(image_path)
+                                img = super_resolution_api(image_file)
                             elif style=="Nudity Detection":
-                                img = nudity_detection_api(image_path)
+                                img = nudity_detection_api(image_file)
                             st.image(img, use_column_width=True)
                 except :
                     handle_error()
@@ -149,24 +140,18 @@ def render_dual_content(page, name1="Image 1", name2="Image 2"):
         submitted = st.form_submit_button("Submit")
         if submitted:
             if image_file_1 is not None and image_file_2 is not None:
-                save_uploadedfile(image_file_1, name="temp_image_1")
-                save_uploadedfile(image_file_2, name="temp_image_2")
-                extension1 = "." + image_file_1.name.split(".")[-1]
-                extension2 = "." + image_file_2.name.split(".")[-1]
                 col1, col2 = st.columns(2)
                 col1.header(name1)
                 col1.image(image_file_1, use_column_width=True)
                 col2.header(name2)
                 col2.image(image_file_2, use_column_width=True)
-                image_path1 = "temp/" + "temp_image_1" + extension1
-                image_path2 = "temp/" + "temp_image_2" + extension2
                 try:
                     with st.spinner(""):
                         if page == "Compare Images":
-                            match = compare_images_api(image_path1, image_path2)
+                            match = compare_images_api(image_file_1, image_file_2)
                             st.header(f"Match : {match}%")
                         if page == "Style Transfer":
-                            img = style_transfer_api(image_path1, image_path2)
+                            img = style_transfer_api(image_file_1, image_file_2)
                             st.header("Output :")
                             st.image(img, use_column_width=True)
                 except:
@@ -181,7 +166,7 @@ def stable_diffusion_api(prompt, samples=4, scale=7.5, steps=45, seed=1024):
     generator = torch.Generator(device=device).manual_seed(seed)
     with autocast("cuda"):
         images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
-    return images_list
+    return images_list["sample"]
 
 def text_to_image_api(prompt):
     api="https://api.deepai.org/api/text2img"
@@ -196,76 +181,76 @@ def generate_random_human_api():
     resp = requests.get(api)
     return resp.content
 
-def toonify_api(image_path):
+def toonify_api(image):
     api="https://api.deepai.org/api/toonify"
     r = requests.post(
         api,
-        files={"image": open(image_path, "rb"),},
+        files={"image": image,},
         headers=headers,
     )
     resp = r.json()
     return resp["output_url"]
 
-def style_transfer_api(image_path1, image_path2):
+def style_transfer_api(image1, image2):
     api="https://api.deepai.org/api/neural-style"
     r = requests.post(
         api,
         files={
-            "content": open(image_path1, "rb"),
-            "style": open(image_path2, "rb"),
+            "content": image1,
+            "style": image2,
         },
         headers=headers,
     )
     resp = r.json()
     return resp["output_url"]
 
-def dreamify_api(image_path):
+def dreamify_api(image):
     api="https://api.deepai.org/api/deepdream"
     r = requests.post(
         api,
-        files={"image": open(image_path, "rb"),},
+        files={"image": image,},
         headers=headers,
     )
     resp = r.json()
     return resp["output_url"]
 
-def colorization_api(image_path):
+def colorization_api(image):
     api="https://api.deepai.org/api/colorizer"
     r = requests.post(
         api,
-        files={"image": open(image_path, "rb"),},
+        files={"image": image,},
         headers=headers,
     )
     resp = r.json()
     return resp["output_url"]
 
-def noise_reduction_api(image_path):
+def noise_reduction_api(image):
     api="https://api.deepai.org/api/waifu2x"
     r = requests.post(
         api,
-        files={"image": open(image_path, "rb"),},
+        files={"image": image,},
         headers=headers,
     )
     resp = r.json()
     return resp["output_url"]
 
-def super_resolution_api(image_path):
+def super_resolution_api(image):
     api="https://api.deepai.org/api/torch-srgan"
     r = requests.post(
         api,
-        files={"image": open(image_path, "rb"),},
+        files={"image": image,},
         headers=headers,
     )
     resp = r.json()
     return resp["output_url"]
 
-def compare_images_api(image_path1, image_path2):
+def compare_images_api(image1, image2):
     api="https://api.deepai.org/api/image-similarity"
     r = requests.post(
         api,
         files={
-            "image1": open(image_path1, "rb"),
-            "image2": open(image_path2, "rb"),
+            "image1": image1,
+            "image2": image2,
         },
         headers=headers,
     )
@@ -275,15 +260,15 @@ def compare_images_api(image_path1, image_path2):
     else:
         return str(round(100-resp["output"]["distance"]*2.77777777778))
 
-def nudity_detection_api(image_path):
+def nudity_detection_api(image):
     api="https://api.deepai.org/api/nsfw-detector"
     r = requests.post(
         api,
-        files={"image": open(image_path, "rb"),},
+        files={"image": image,},
         headers=headers,
     )
     resp = r.json()
-    img = Image.open(image_path)
+    img = Image.open(image)
     transform = torchvision.transforms.Compose([transforms.PILToTensor()])
     img = transform(img)
     bbox=[]
@@ -297,7 +282,7 @@ def nudity_detection_api(image_path):
     img = torchvision.transforms.ToPILImage('RGB')(img)
     return img
 
-def background_removal(image_path):
-    image = Image.open(image_path)
-    output = remove(image)
+def background_removal(image):
+    img = Image.open(image)
+    output = remove(img)
     return output

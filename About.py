@@ -3,7 +3,7 @@ import os
 from lib.utils import styling
 from lib.utils import stable_diffusion_api, text_to_image_api, generate_random_human_api, toonify_api, style_transfer_api, dreamify_api, colorization_api, noise_reduction_api, super_resolution_api, compare_images_api, nudity_detection_api, background_removal
 
-def stable_diffusion_daisi(prompt, samples, scale, steps, seed):
+def stable_diffusion_daisi(prompt, samples=4, scale=7.5, steps=45, seed=1024):
     '''
     Returns an array of Pillow images.
     '''
@@ -21,59 +21,59 @@ def generate_random_human_daisi():
     '''
     return generate_random_human_api()
 
-def toonify_daisi(image_path):
+def toonify_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return toonify_api(image_path)
+    return toonify_api(image)
 
-def style_transfer_daisi(image_path1, image_path2):
+def style_transfer_daisi(image1, image2):
     '''
     Returns a URL with the generated image.
     '''
-    return style_transfer_api(image_path1, image_path2)
+    return style_transfer_api(image1, image2)
 
-def dreamify_daisi(image_path):
+def dreamify_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return dreamify_api(image_path)
+    return dreamify_api(image)
 
-def colorization_daisi(image_path):
+def colorization_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return colorization_api(image_path)
+    return colorization_api(image)
 
-def noise_reduction_daisi(image_path):
+def noise_reduction_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return noise_reduction_api(image_path)
+    return noise_reduction_api(image)
 
-def super_resolution_daisi(image_path):
+def super_resolution_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return super_resolution_api(image_path)
+    return super_resolution_api(image)
 
-def compare_images_daisi(image_path1, image_path2):
+def compare_images_daisi(image1, image2):
     '''
     Returns image match percentage.
     '''
-    return compare_images_api(image_path1, image_path2)
+    return compare_images_api(image1, image2)
 
-def nudity_detection_daisi(image_path):
+def nudity_detection_daisi(image):
     '''
     Returns a Pillow image.
     '''
-    return nudity_detection_api(image_path)
+    return nudity_detection_api(image)
 
-def background_removal(image_path):
+def background_removal(image):
     '''
     Returns a Pillow image.
     '''
-    return background_removal(image_path)
+    return background_removal(image)
 
 def main():
     styling()
