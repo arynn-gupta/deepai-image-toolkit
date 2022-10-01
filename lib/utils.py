@@ -10,6 +10,9 @@ from torchvision.utils import draw_bounding_boxes
 from icons import *
 from diffusers import StableDiffusionPipeline
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["HF_TOKEN"] = "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"
+
 headers = {
     "api-key" : "quickstart-QUdJIGlzIGNvbWluZy4uLi4K",
     "X-Forwarded-For": ".".join(str(random.randint(0, 255)) for _ in range(4))
@@ -228,8 +231,6 @@ def render_generator_btn(label, api):
 
 
 def stable_dffusion(label):
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-    os.environ["HF_TOKEN"] = "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"
     model_id = "CompVis/stable-diffusion-v1-4"
     device = "cuda"
     value = os.getenv("HF_TOKEN")
@@ -249,7 +250,7 @@ def stable_dffusion(label):
                         generator = torch.Generator(device=device).manual_seed(seed)
                         with autocast("cuda"):
                             images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
-                            for image in images_list["sample"]:
-                                st.image(image)
+                        for image in images_list["sample"]:
+                            st.image(image)
             except Exception as e:
                 st.text(e)
