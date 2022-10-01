@@ -207,7 +207,7 @@ def toonify_api(image_path):
     return resp["output_url"]
 
 def style_transfer_api(image_path1, image_path2):
-    api="https://api.deepai.org/api/image-similarity"
+    api="https://api.deepai.org/api/neural-style"
     r = requests.post(
         api,
         files={

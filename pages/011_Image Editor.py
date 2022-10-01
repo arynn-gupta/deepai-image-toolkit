@@ -91,7 +91,7 @@ def main():
     
         if img is not None:
             with st.spinner(""):
-                output = background_removal(image)
+                output = background_removal(img)
                 st.image(output, use_column_width=True)
                 
 
