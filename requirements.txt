@@ -5,3 +5,5 @@ requests==2.28.1
 opencv-python==4.6.0.66
 rembg==2.0.25
 websocket-client==1.4.1
+transformers==4.22.2
+diffusers==0.3.0
