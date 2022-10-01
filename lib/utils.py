@@ -284,9 +284,7 @@ def nudity_detection_api(image_path):
             headers=headers,
         )
         resp = r.json()
-        st.write('test')
         img = read_image(image_path)
-        st.write(img)
         bbox=[]
         labels=[]
         for i in resp["output"]["detections"]:
