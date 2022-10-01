@@ -238,12 +238,13 @@ def stable_dffusion(label):
     pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
     pipe = pipe.to(device)
     
+    samples = st.sidebar.number_input("Number of images", value=4)
+    scale = st.sidebar.number_input("Guidance", value=7.5)
+    steps = st.sidebar.number_input("Steps", value=45)
+    seed = st.sidebar.number_input("Seed", value=1024)
+    
     with st.form("my_form"):
         prompt = st.text_area(label)
-        samples = st.sidebar.number_input("Number of images", value=4)
-        scale = st.sidebar.number_input("Guidance", value=7.5)
-        steps = st.sidebar.number_input("Steps", value=45)
-        seed = st.sidebar.number_input("Seed", value=1024)
         submitted = st.form_submit_button("Submit")
         if submitted:
             try:
