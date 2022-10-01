@@ -236,10 +236,6 @@ def stable_dffusion(label):
     device = "cuda"
     value = os.getenv("HF_TOKEN")
     
-    with st.spinner("Installing Dependencies ..."):
-        pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
-        pipe = pipe.to(device)
-    
     with st.form("my_form"):
         prompt = st.text_area(label)   
         col1,col2 =st.columns(2)    
@@ -251,6 +247,8 @@ def stable_dffusion(label):
         if submitted:
             try:
                 with st.spinner(""):
+                        pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
+                        pipe = pipe.to(device)
                         generator = torch.Generator(device=device).manual_seed(seed)
                         with autocast("cuda"):
                             images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
