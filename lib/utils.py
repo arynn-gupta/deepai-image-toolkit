@@ -9,7 +9,7 @@ import random
 import torch
 from torch import autocast
 import torchvision
-from torchvision.io import read_image
+from torchvision import transforms
 from torchvision.utils import draw_bounding_boxes
 from icons import *
 from diffusers import StableDiffusionPipeline
@@ -284,7 +284,8 @@ def nudity_detection_api(image_path):
             headers=headers,
         )
         resp = r.json()
-        img = read_image(image_path)
+        img = Image.open(image_path)
+        img = torchvision.transforms.ToTensor()(img).type(dtype=torch.uint8)
         bbox=[]
         labels=[]
         for i in resp["output"]["detections"]:
@@ -292,7 +293,7 @@ def nudity_detection_api(image_path):
             bbox.append([left, top, left+width, top+height])
             labels.append(i["name"])
         bbox = torch.tensor(bbox, dtype=torch.int)
-        img=draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
+        img = draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
         img = torchvision.transforms.ToPILImage()(img)
         return img
     except Exception as e:
