@@ -232,21 +232,21 @@ def render_generator_btn(label, api):
 
 
 def stable_dffusion(label):
-    with torch.no_grad():
-        torch.cuda.empty_cache()
     model_id = "CompVis/stable-diffusion-v1-4"
     device = "cuda"
     value = os.getenv("HF_TOKEN")
-    pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
-    pipe = pipe.to(device)
     
-    samples = st.sidebar.number_input("Number of images", value=4)
-    scale = st.sidebar.number_input("Guidance", value=7.5)
-    steps = st.sidebar.number_input("Steps", value=45)
-    seed = st.sidebar.number_input("Seed", value=1024)
+    with st.spinner("Installing Dependencies ..."):
+        pipe = StableDiffusionPipeline.from_pretrained(model_id, use_auth_token=value)
+        pipe = pipe.to(device)
     
     with st.form("my_form"):
-        prompt = st.text_area(label)
+        prompt = st.text_area(label)   
+        col1,col2 =st.columns(2)    
+        samples = col1.number_input("Number of images", value=4)
+        scale = col1.number_input("Guidance", value=7.5)
+        steps = col2.number_input("Steps", value=45)
+        seed = col2.number_input("Seed", value=1024)
         submitted = st.form_submit_button("Submit")
         if submitted:
             try:
@@ -256,5 +256,5 @@ def stable_dffusion(label):
                             images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
                         for image in images_list["sample"]:
                             st.image(image)
-            except Exception as e:
-                st.text(e)
+            except :
+                handle_error('')

@@ -1,7 +1,6 @@
 import streamlit as st
 from lib.utils import styling, stable_dffusion
 
-
 def main():
     styling()
         
