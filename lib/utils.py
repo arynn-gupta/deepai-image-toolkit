@@ -269,10 +269,9 @@ def nudity_detection_api(image):
     )
     resp = r.json()
     try:
-        image.verify()
-        img = image
-    except:
         img = Image.open(image)
+    except:
+        img = image
     transform = torchvision.transforms.Compose([transforms.PILToTensor()])
     img = transform(img)
     bbox=[]
@@ -288,9 +287,8 @@ def nudity_detection_api(image):
 
 def background_removal_api(image):
     try:
-        image.verify()
-        img = image
-    except:
         img = Image.open(image)
+    except:
+        img = image
     output = remove(img)
     return output
