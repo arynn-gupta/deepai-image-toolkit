@@ -7,10 +7,10 @@ image_path2 = "image2.jpg"
 image = open(image_path, 'rb').read()
 image1 = open(image_path1, 'rb').read()
 image2  = open(image_path2, 'rb').read()
-try:
-    print(deepai_image_toolkit.stable_diffusion_daisi(prompt).value)
-except:
-    print('Error in Stable Diffusion API')
+# try:
+#     print(deepai_image_toolkit.stable_diffusion_daisi(prompt).value)
+# except:
+#     print('Error in Stable Diffusion API')
 try:
     print(deepai_image_toolkit.text_to_image_daisi(prompt).value)
 except:
