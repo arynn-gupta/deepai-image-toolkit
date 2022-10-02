@@ -15,10 +15,10 @@ try:
     print(deepai_image_toolkit.text_to_image_daisi(prompt).value)
 except:
     print('Error in Text to Image API')
-try:
-    print(deepai_image_toolkit.generate_random_human_daisi().value)
-except:
-    print('Error in Random Human Generator API')
+# try:
+#     print(deepai_image_toolkit.generate_random_human_daisi().value)
+# except:
+#     print('Error in Random Human Generator API')
 try:
     print(deepai_image_toolkit.toonify_daisi(image).value)
 except:

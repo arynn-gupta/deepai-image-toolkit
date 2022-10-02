@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from lib.utils import styling
+from lib.utils import styling, api_bypass
 from lib.utils import stable_diffusion_api, text_to_image_api, generate_random_human_api, toonify_api, style_transfer_api, dreamify_api, colorization_api, noise_reduction_api, super_resolution_api, compare_images_api, nudity_detection_api, background_removal_api
 
 def stable_diffusion_daisi(prompt, samples=4, scale=7.5, steps=45, seed=1024):
@@ -13,7 +13,11 @@ def text_to_image_daisi(prompt):
     '''
     Returns a URL with the generated image.
     '''
-    return text_to_image_api(prompt)
+    try:
+        text_to_image_api(prompt)
+    except:
+        api_bypass()
+        text_to_image_api(prompt)
 
 def generate_random_human_daisi():
     '''
@@ -37,7 +41,11 @@ def dreamify_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return dreamify_api(image)
+    try:
+        dreamify_api(image)
+    except:
+        api_bypass()
+        dreamify_api(image)
 
 def colorization_daisi(image):
     '''
