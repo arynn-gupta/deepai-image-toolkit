@@ -167,7 +167,10 @@ def stable_diffusion_api(prompt, samples=4, scale=7.5, steps=45, seed=1024):
     generator = torch.Generator(device=device).manual_seed(seed)
     with autocast("cuda"):
         images_list = pipe( [prompt] * samples, num_inference_steps=steps, guidance_scale=scale, generator=generator)
-    return images_list["sample"]
+    images = []
+    for i, image in enumerate(images_list["sample"]):
+        images.append(image)
+    return images
 
 def text_to_image_api(prompt):
     api="https://api.deepai.org/api/text2img"
@@ -180,7 +183,8 @@ def text_to_image_api(prompt):
 def generate_random_human_api():
     api="https://thispersondoesnotexist.com/image"
     resp = requests.get(api)
-    return resp.content
+    img = Image.open(io.BytesIO(resp.content))
+    return img
 
 def toonify_api(image):
     api="https://api.deepai.org/api/toonify"
@@ -292,6 +296,6 @@ def background_removal_api(image):
     try:
         img = Image.open(image)
     except:
-        img = image
-    output = remove(img)
-    return output
+        img = Image.open(io.BytesIO(image))
+    img = remove(img)
+    return img
