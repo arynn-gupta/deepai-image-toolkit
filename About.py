@@ -14,10 +14,10 @@ def text_to_image_daisi(prompt):
     Returns a URL with the generated image.
     '''
     try:
-        text_to_image_api(prompt)
+        return text_to_image_api(prompt)
     except:
         api_bypass()
-        text_to_image_api(prompt)
+        return text_to_image_api(prompt)
 
 def generate_random_human_daisi():
     '''
@@ -29,53 +29,81 @@ def toonify_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return toonify_api(image)
+    try:
+        return toonify_api(image)
+    except:
+        api_bypass()
+        return toonify_api(image)
 
 def style_transfer_daisi(image1, image2):
     '''
     Returns a URL with the generated image.
     '''
-    return style_transfer_api(image1, image2)
+    try:
+        return style_transfer_api(image1, image2)
+    except:
+        api_bypass()
+        return style_transfer_api(image1, image2)
 
 def dreamify_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
     try:
-        dreamify_api(image)
+        return dreamify_api(image)
     except:
         api_bypass()
-        dreamify_api(image)
+        return dreamify_api(image)
 
 def colorization_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return colorization_api(image)
+    try:
+        return colorization_api(image)
+    except:
+        api_bypass()
+        return colorization_api(image)
 
 def noise_reduction_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return noise_reduction_api(image)
+    try:
+        return noise_reduction_api(image)
+    except:
+        api_bypass()
+        return noise_reduction_api(image)
 
 def super_resolution_daisi(image):
     '''
     Returns a URL with the generated image.
     '''
-    return super_resolution_api(image)
+    try:
+        return super_resolution_api(image)
+    except:
+        api_bypass()
+        return super_resolution_api(image)
 
 def compare_images_daisi(image1, image2):
     '''
     Returns image match percentage.
     '''
-    return compare_images_api(image1, image2)
+    try:
+        return compare_images_api(image1, image2)
+    except:
+        api_bypass()
+        return compare_images_api(image1, image2)
 
 def nudity_detection_daisi(image):
     '''
     Returns a Pillow image.
     '''
-    return nudity_detection_api(image)
+    try:
+        return nudity_detection_api(image)
+    except:
+        api_bypass()
+        return nudity_detection_api(image)
 
 def background_removal_daisi(image):
     '''
