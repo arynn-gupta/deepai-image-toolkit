@@ -14,6 +14,7 @@ from torchvision.utils import draw_bounding_boxes
 from icons import *
 from diffusers import StableDiffusionPipeline
 from  PIL import Image
+import io
 from rembg import remove
 
 headers = {
@@ -271,7 +272,7 @@ def nudity_detection_api(image):
     try:
         img = Image.open(image)
     except:
-        img = image
+        img = Image.open(io.BytesIO(image))
     transform = torchvision.transforms.Compose([transforms.PILToTensor()])
     img = transform(img)
     bbox=[]
