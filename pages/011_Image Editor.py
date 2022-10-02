@@ -2,7 +2,7 @@ import numpy as np
 import streamlit as st
 import cv2
 from  PIL import Image, ImageEnhance
-from lib.utils import styling, background_removal
+from lib.utils import styling, background_removal_api
 
 def main():
 
@@ -91,7 +91,7 @@ def main():
     
         if img is not None:
             with st.spinner(""):
-                output = background_removal(img)
+                output = background_removal_api(img)
                 st.image(output, use_column_width=True)
                 
 

@@ -282,7 +282,7 @@ def nudity_detection_api(image):
     img = torchvision.transforms.ToPILImage('RGB')(img)
     return img
 
-def background_removal(image):
+def background_removal_api(image):
     img = Image.open(image)
     output = remove(img)
     return output

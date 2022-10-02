@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from lib.utils import styling
-from lib.utils import stable_diffusion_api, text_to_image_api, generate_random_human_api, toonify_api, style_transfer_api, dreamify_api, colorization_api, noise_reduction_api, super_resolution_api, compare_images_api, nudity_detection_api, background_removal
+from lib.utils import stable_diffusion_api, text_to_image_api, generate_random_human_api, toonify_api, style_transfer_api, dreamify_api, colorization_api, noise_reduction_api, super_resolution_api, compare_images_api, nudity_detection_api, background_removal_api
 
 def stable_diffusion_daisi(prompt, samples=4, scale=7.5, steps=45, seed=1024):
     '''
@@ -69,11 +69,11 @@ def nudity_detection_daisi(image):
     '''
     return nudity_detection_api(image)
 
-def background_removal(image):
+def background_removal_daisi(image):
     '''
     Returns a Pillow image.
     '''
-    return background_removal(image)
+    return background_removal_api(image)
 
 def main():
     styling()

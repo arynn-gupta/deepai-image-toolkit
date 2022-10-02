@@ -2,6 +2,7 @@
 torch==1.12.0+cu116
 torchvision
 streamlit
+aiohttp
 requests
 opencv-python
 rembg
