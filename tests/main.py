@@ -52,6 +52,6 @@ try:
 except:
     print('Error in Nudity Detection API')
 try:
-  print(deepai_image_toolkit.background_removal_daisi(image).value)
+    print(deepai_image_toolkit.background_removal_daisi(image).value)
 except:
     print('Error in Background removal API')

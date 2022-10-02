@@ -277,12 +277,14 @@ def nudity_detection_api(image):
     img = transform(img)
     bbox=[]
     labels=[]
+    font_height=20
     for i in resp["output"]["detections"]:
         left, top, width, height = i["bounding_box"]
         bbox.append([left, top, left+width, top+height])
         labels.append(i["name"])
+        font_height=height
     bbox = torch.tensor(bbox, dtype=torch.int)
-    img = draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(height/9))
+    img = draw_bounding_boxes(img, bbox,width=2,labels= labels,fill =True,font="font.ttf", font_size=int(font_height/9))
     img = torchvision.transforms.ToPILImage('RGB')(img)
     return img
 
