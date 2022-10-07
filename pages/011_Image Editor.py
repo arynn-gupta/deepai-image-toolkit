@@ -36,7 +36,7 @@ def main():
             
             elif filters == 'Blur':
                 img_convert = np.array(image.convert('RGB'))
-                slide = st.sidebar.slider('Quantidade de Blur', 3, 81, 9, step=2)
+                slide = st.sidebar.slider('Amount of Blur', 3, 81, 9, step=2)
                 img_convert = cv2.cvtColor(img_convert, cv2.COLOR_RGB2BGR)
                 blur_image = cv2.GaussianBlur(img_convert, (slide,slide), 0, 0)
                 st.image(blur_image, channels='BGR', use_column_width=True) 

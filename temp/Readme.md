@@ -1,1 +1,0 @@
-Temporary Directory to store Images.
